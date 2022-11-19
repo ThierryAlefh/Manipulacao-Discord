@@ -1,39 +1,35 @@
 # Mapeamento de endpoints
 
--   Membros
+-   [Membros](#membros)
 
-    -   Buscar Membros de um Servidor _ok_
+    -   [Buscar Membros de um Servidor](#buscar-membros-de-um-servidor) _ok_
 
--   Mensagens
+-   [Mensagens](#mensagens)
 
-    -   Inserir Mensagem em Canal de Texto _ok_
-    -   Ler Mensagens de um Canal de Texto _ok_
-    -   Adicionar reação á uma mensagem _ok_
-    -   Remover a reação de uma mensagem _ok_
+    -   [Inserir Mensagem em Canal de Texto](#inserir-mensagem-em-canal) _ok_
+    -   [Ler Mensagens de um Canal de Texto](#buscar-mensagens-de-um-canal) _ok_
+    -   [Adicionar reação á uma mensagem](#adicionar-reação-à-uma-mensagem) _ok_
+    -   [Remover a reação de uma mensagem](#remover-reação-de-uma-mensagem) _ok_
 
--   Tópicos
+-   [Tópicos](#tópicos)
 
-    -   Inserir Tópicos em Canal de Texto _ok_
+    -   [Inserir Tópicos em Canal de Texto](#inserir-um-tópico) _ok_
     -   Ler Mensagens de um Tópico em um Canal de Texto
     -   Ler Mensagens de Múltiplos Tópicos em um Canal de Texto
     -   Ler Mensagens de um usuário em um ou Múltiplos Canais de Texto
 
--   Permissões
+-   [Cargos](#cargos)
 
-    -   Cargos
+    -   Criar cargo
+    -   Adicionar cargo á um usuário
+    -   Remover cargo de um usuário
 
-        -   Criar cargo
-        -   Adicionar cargo á um usuário
-        -   Remover cargo de um usuário
-
-    -   Canais
-        -   Alterar Permissão de um Canal de Texto
-        -   Adicionar/Remover Membro a Canal Privado
-        -   Adicionar/Remover Cargo a Canal Privado
-        -   Listar permissões dos canais
-
--   Outros
-    -   Buscar canais dentro de uma categoria
+-   [Canais](#canais)
+    -   Alterar Permissão de um Canal de Texto
+    -   Adicionar/Remover Membro a Canal Privado
+    -   Adicionar/Remover Cargo a Canal Privado
+    -   Listar permissões dos canais
+    -   [Listar canais dentro de uma categoria](#listar-canais-dentro-de-uma-categoria) _ok_
 
 # Endpoints
 
@@ -96,3 +92,17 @@ O máximo de mensagens listadas é 100. Para pegar as mensagens antes disso, é 
 ```
 
 ---
+
+## Cargos
+
+---
+
+## Canais
+
+---
+
+### Listar canais dentro de uma categoria
+
+**GET** `/guilds/{guild.id}/channels`
+
+A chave `parent_id` representa a categoria onde o canal está localizado
