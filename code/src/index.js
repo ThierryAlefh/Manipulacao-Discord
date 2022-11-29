@@ -86,21 +86,25 @@ class Canal extends Servidor {
 		return r;
 	}
 
-	async listarMensagens() {
+	async listarMensagens(limit = Infinity) {
 		let messages = [],
-			lastId = this.propriedades['last_message_id'] || 0,
+			lastId = 0,
 			length = 0;
 
 		do {
 			const r = await consume(
 				api.get,
-				`/channels/${this.channel}/messages?limit=3&before=${lastId}`
+				`/channels/${this.channel}/messages?limit=100${lastId ? `&before=${lastId}` : ''}`
 			);
 			r.reverse();
 			lastId = r[0].id;
 			messages = [...r, ...messages];
 			length = r.length;
-		} while (length == 3);
+		} while (length == 100 && messages.length < limit);
+
+		if (messages.length > limit) {
+			messages.splice(0, messages.length - limit);
+		}
 
 		return messages;
 	}
