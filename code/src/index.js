@@ -1,24 +1,25 @@
 import axios from 'axios';
 import 'dotenv/config';
 
+const { TOKEN } = process.env;
+const api = axios.create({
+	baseURL: 'https://discord.com/api/v10',
+	headers: {
+		authorization: TOKEN,
+		accept: 'application/json',
+	},
+});
+
 async function consume(func, route, ...options) {
 	try {
 		const r = await func(route, ...options);
-		return r.data;
+		return r.data || r.status;
 	} catch (err) {
 		if (err.response) console.log(err.response.data);
 		else console.log('Error');
 		return err.response.status;
 	}
 }
-
-const { TOKEN } = process.env;
-const api = axios.create({
-	baseURL: 'https://discord.com/api/v10',
-	headers: {
-		authorization: TOKEN,
-	},
-});
 
 class Servidor {
 	constructor(guild) {
@@ -46,16 +47,38 @@ class Canal extends Servidor {
 		});
 		return r;
 	}
+
+	async listarMensagens() {
+		const r = await consume(api.get, `/channels/${this.channel}/messages`);
+		return r;
+	}
+
+	async inserirReacaoMensagem(message, reaction) {
+		if (!reaction) return 400;
+
+		const r = await consume(
+			api.put,
+			`/channels/${this.channel}/messages/${message}/reactions/${reaction}/@me`
+		);
+		return r;
+	}
+
+	async removerReacaoMensagem(message, reaction) {
+		if (!reaction) return 400;
+
+		const r = await consume(
+			api.delete,
+			`/channels/${this.channel}/messages/${message}/reactions/${reaction}/@me`
+		);
+		return r;
+	}
 }
 
 const server = new Servidor('1037095906283114567');
 const canal = new Canal('1037095906283114567', '1001877796945150082');
 
-// const s = await server.listarCanais();
-// console.log(s);
-
-const t = await canal.inserirMensagem('Teste');
-console.log(t);
+const s = await canal.inserirReacaoMensagem('1046974218337792000', '🤣');
+console.log(s);
 
 // //Mensagens
 
