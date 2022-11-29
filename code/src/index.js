@@ -6,8 +6,9 @@ const { TOKEN } = process.env;
 const api = axios.create({
 	baseURL: 'https://discord.com/api/v10',
 	headers: {
-		authorization: TOKEN,
-		accept: 'application/json',
+		Authorization: TOKEN,
+		Accept: 'application/json',
+		'Accept-Encoding': 'application/json',
 	},
 });
 
@@ -65,15 +66,16 @@ class Canal extends Servidor {
 	constructor(guild, channel) {
 		super(guild);
 		this.channel = channel;
+		this.propriedades = {};
+	}
+
+	async sincronizar() {
+		const r = await consume(api.get, `/channels/${this.channel}`);
+		this.propriedades = { ...r };
+		return r;
 	}
 
 	// Mensagens
-	async ultimaMensagem() {
-		const id = await consume(api.get, `/channels/${this.channel}/messages?limit=1`);
-		console.log(id);
-		return id;
-	}
-
 	async inserirMensagem(content) {
 		if (!content || !content.trim() || content.length > 2000) return 400;
 
@@ -86,16 +88,19 @@ class Canal extends Servidor {
 
 	async listarMensagens() {
 		let messages = [],
-			lastId = await this.ultimaMensagem();
+			lastId = this.propriedades['last_message_id'] || 0,
+			length = 0;
 
 		do {
 			const r = await consume(
 				api.get,
-				`/channels/${this.channel}/messages?limit=100&before=${lastId}`
+				`/channels/${this.channel}/messages?limit=3&before=${lastId}`
 			);
-			lastId = r[r.length - 1].id;
-			messages = [...r, messages];
-		} while (r.length != 100);
+			r.reverse();
+			lastId = r[0].id;
+			messages = [...r, ...messages];
+			length = r.length;
+		} while (length == 3);
 
 		return messages;
 	}
@@ -156,9 +161,3 @@ class Canal extends Servidor {
 		}
 	}
 }
-
-// channel: 1001877796945150082
-// guild: 1037095906283114567
-// categoria: 962180825280036975
-// user: 336169222902251521
-// message: 1047107544792965141
