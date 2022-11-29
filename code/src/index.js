@@ -1,44 +1,109 @@
 import axios from 'axios';
 import 'dotenv/config';
-import PromptSync from 'prompt-sync';
 
-const { TOKEN, GUILD, DISCORD_URL } = process.env;
-const api = axios.create({ baseURL: DISCORD_URL });
+async function consume(func, route, ...options) {
+	try {
+		const r = await func(route, options);
+		return r.data;
+	} catch (err) {
+		if (err.response) console.log(err.response.data, err.response.status);
+		else console.log('Error');
+		return err.response.status;
+	}
+}
+
+const { TOKEN } = process.env;
+const api = axios.create({
+	baseURL: 'https://discord.com/api/v10',
+	headers: {
+		authorization: TOKEN,
+	},
+});
 
 class Servidor {
-	constructor(token, guild) {
-		this.token = token;
+	constructor(guild) {
 		this.guild = guild;
+	}
+
+	async listarCanais() {
+		const r = await consume(api.get, `/guilds/${this.guild}/channels`);
+		return r;
 	}
 }
 
 class Canal extends Servidor {
-	constructor(token, guild, canal) {
-		super(token, guild);
+	constructor(guild, canal) {
+		super(guild);
 		this.canal = canal;
-	}
-
-	async listarMensagens() {
-		const r = await api.get(
-			`/channels/${this.canal}/messages?limit=50${/*&before={message.id}*/ ''}`,
-			{
-				headers: {
-					authorization: this.token,
-				},
-			}
-		);
-		return r.data;
 	}
 }
 
-// /*Buscar membros de um servidor*/
-// async consultarUsuarios() {
-// 	const r = await api.get(`/guilds/${GUILD}/members`, {
-// 		authorization: TOKEN,
+const server = new Servidor('1037095906283114567');
+const canal = new Canal('1037095906283114567', '1001877796945150082');
+
+const s = await server.listarCanais();
+console.log(s);
+
+// //Mensagens
+
+// async function inserirMensagem(channel) {
+// 	const r = await api.post(`/channels/${channel}/messages`, {
+// 		content: 'Hello World!',
+// 		tts: true,
 // 	});
-// 	return r.data;
+// 	console.log(r.data);
+// } //ok
+
+// async function listarMensagens(channel) {
+// 	const r = await api.get(
+// 		`/channels/${channel}/messages?limit=50${/*&before={message.id}*/ ''}`
+// 	);
+// 	console.log(r);
 // }
 
-// async inserirMensagem()
+// async function adicionarReacao(channel) {
+// 	const r = await api.put(
+// 		`/channels/${channel}/messages/1046919162720682076/reactions/🤣/@me`
+// 	);
+// 	console.log(r.data);
+// } //ok
 
-const comandos = new Canal(TOKEN, GUILD, '');
+// async function removerReacao(channel, messageId) {
+// 	const r = await api.delete(
+// 		`/channels/${channel}/messages/${messageId}/reactions/🤣/@me`
+// 	);
+// 	console.log(r.data);
+// } //ok
+
+// // Tópicos
+
+// async function inserirTopico(channel) {
+// 	const r = await api.post(`/channels/${channel}/threads`, {
+// 		name: 'Hello World!',
+// 		type: 11,
+// 	});
+// 	console.log(r.data);
+// } //ok
+
+// // Cargos
+
+// // Canais
+// async function listarCanaisCategoria(guild, categoria) {
+// 	const r = await api
+// 		.get(`/guilds/${guild}/channels`, {
+// 			headers: {
+// 				'User-Agent': 'axios/0.21.4',
+// 				accept: 'application/json',
+// 				authorization: TOKEN,
+// 			},
+// 		})
+// 		.catch(() => console.log('error'));
+
+// 	if (r.status === 200) console.log(r.data);
+// }
+
+// await listarCanaisCategoria('1037095906283114567', '962180825280036975');
+
+// channel: 1001877796945150082
+// guild: 1037095906283114567
+// categoria: 962180825280036975
