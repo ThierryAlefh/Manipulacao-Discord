@@ -1,35 +1,37 @@
 # Mapeamento de endpoints
 
--   [Membros](#membros)
+- [Membros](#membros)
 
-    -   [Buscar Membros de um Servidor](#buscar-membros-de-um-servidor) _ok_
+  - [Buscar Membros de um Servidor](#buscar-membros-de-um-servidor)
 
--   [Mensagens](#mensagens)
+- [Mensagens](#mensagens)
 
-    -   [Inserir Mensagem em Canal de Texto](#inserir-mensagem-em-canal) _ok_
-    -   [Ler Mensagens de um Canal de Texto](#buscar-mensagens-de-um-canal) _ok_
-    -   [Adicionar reação á uma mensagem](#adicionar-reação-à-uma-mensagem) _ok_
-    -   [Remover a reação de uma mensagem](#remover-reação-de-uma-mensagem) _ok_
+  - [Inserir Mensagem em Canal de Texto](#inserir-mensagem-em-canal)
+  - [Ler Mensagens de um Canal de Texto](#buscar-mensagens-de-um-canal)
+  - [Adicionar reação á uma mensagem](#adicionar-reação-à-uma-mensagem)
+  - [Remover a reação de uma mensagem](#remover-reação-de-uma-mensagem)
 
--   [Tópicos](#tópicos)
+- [Tópicos](#tópicos)
 
-    -   [Inserir Tópicos em Canal de Texto](#inserir-um-tópico) _ok_
-    -   Ler Mensagens de um Tópico em um Canal de Texto
-    -   Ler Mensagens de Múltiplos Tópicos em um Canal de Texto
-    -   Ler Mensagens de um usuário em um ou Múltiplos Canais de Texto
+  - [Inserir Tópicos em Canal de Texto](#inserir-um-tópico)
+  - [Ler Mensagens de um Tópico em um Canal de Texto](#ler-mensagens-de-um-tópico-em-um-canal-de-texto)
+  - Ler Mensagens de Múltiplos Tópicos em um Canal de Texto // Loop
+  - Ler Mensagens de um usuário em um ou Múltiplos Canais de Texto // Loop
 
--   [Cargos](#cargos)
+- [Cargos](#cargos)
 
-    -   Criar cargo
-    -   Adicionar cargo á um usuário
-    -   Remover cargo de um usuário
+  - [Criar cargo](#criar-cargo)
+  - [Adicionar cargo à um usuário](#adicionar-cargo-à-um-usuário)
+  - [Remover cargo de um usuário](#remover-cargo-de-um-usuário)
 
--   [Canais](#canais)
-    -   Alterar Permissão de um Canal de Texto
-    -   Adicionar/Remover Membro a Canal Privado
-    -   Adicionar/Remover Cargo a Canal Privado
-    -   Listar permissões dos canais
-    -   [Listar canais dentro de uma categoria](#listar-canais-dentro-de-uma-categoria) _ok_
+- [Canais](#canais)
+  - [Alterar Permissão de um Canal de Texto](#alterar-permissões-de-um-canal-de-texto)
+  - [Adicionar/Remover Membro a Canal Privado](#adicionarremover-membro-a-canal-privado)
+  - [Adicionar/Remover Cargo a Canal Privado](#alterar-permissões-de-um-canal-de-texto) // Ver **Alterar permissões de um canal de texto**
+  - Listar permissões dos canais // Loop
+  - [Listar canais dentro de uma categoria](#listar-canais-dentro-de-uma-categoria)
+
+# BaseUrl: **`https://discord.com/api/v10`**
 
 # Endpoints
 
@@ -93,11 +95,80 @@ O máximo de mensagens listadas é 100. Para pegar as mensagens antes disso, é 
 
 ---
 
+### Ler Mensagens de um Tópico em um Canal de Texto
+
+**GET** `/channels/{topico}/messages`
+
+---
+
 ## Cargos
+
+### Criar cargo
+
+**POST** `/guilds/{guild.id}/roles`
+
+```js
+{
+  "name": "Role",
+  "permissions": 1024,
+  "color": "240",
+  "hoist": false,
+  "icon": null,
+  "unicode_emoji": null,
+  "mentionable": false
+}
+```
+
+---
+
+### Adicionar cargo à um usuário
+
+**PUT** `/guilds/{guild.id}/members/{user.id}/roles/{role.id}`
+
+---
+
+### Remover cargo de um usuário
+
+**DELETE** `/guilds/{guild.id}/members/{user.id}/roles/{role.id}`
 
 ---
 
 ## Canais
+
+### Alterar permissões de um canal de texto
+
+**PATCH** `/channels/{channel.id}`
+
+```js
+{
+  "name": "Channel",
+  "type": 0,
+  "permission_overwrites": [
+    {
+      "id": "336169222902251521", // {user.id}
+      "type": 1,
+      "allow": "805307408", // {permissions}
+      "deny": "0"
+    }
+  ],
+}
+```
+
+---
+
+### Adicionar/Remover Membro a Canal Privado
+
+**PUT** `/channels/{channel.id}/permissions/{user.id}`
+
+```js
+{
+  "type": 1,
+  "allow": 3072
+  "deny": 0
+}
+```
+
+**DELETE** `/channels/{channel.id}/permissions/{user.id}`
 
 ---
 
