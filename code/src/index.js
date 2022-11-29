@@ -3,10 +3,10 @@ import 'dotenv/config';
 
 async function consume(func, route, ...options) {
 	try {
-		const r = await func(route, options);
+		const r = await func(route, ...options);
 		return r.data;
 	} catch (err) {
-		if (err.response) console.log(err.response.data, err.response.status);
+		if (err.response) console.log(err.response.data);
 		else console.log('Error');
 		return err.response.status;
 	}
@@ -32,17 +32,30 @@ class Servidor {
 }
 
 class Canal extends Servidor {
-	constructor(guild, canal) {
+	constructor(guild, channel) {
 		super(guild);
-		this.canal = canal;
+		this.channel = channel;
+	}
+
+	async inserirMensagem(content) {
+		if (!content || !content.trim() || content.length > 2000) return 400;
+
+		const r = await consume(api.post, `/channels/${this.channel}/messages`, {
+			content,
+			tts: false,
+		});
+		return r;
 	}
 }
 
 const server = new Servidor('1037095906283114567');
 const canal = new Canal('1037095906283114567', '1001877796945150082');
 
-const s = await server.listarCanais();
-console.log(s);
+// const s = await server.listarCanais();
+// console.log(s);
+
+const t = await canal.inserirMensagem('Teste');
+console.log(t);
 
 // //Mensagens
 
